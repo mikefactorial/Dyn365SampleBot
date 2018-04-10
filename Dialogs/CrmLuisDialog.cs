@@ -57,9 +57,18 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             }
             else
             {
-                string message = $"Sorry I did not understand: " + string.Join(", ", result.Intents.Select(i => i.Intent));
-                await context.PostAsync(message);
-                context.Wait(MessageReceived);
+                if (result.Query.ToLower().Contains("thank"))
+                {
+                    string message = $"You're welcome!";
+                    await context.PostAsync(message);
+                    context.Wait(MessageReceived);
+                }
+                else
+                {
+                    string message = $"Sorry I did not understand: " + string.Join(", ", result.Intents.Select(i => i.Intent));
+                    await context.PostAsync(message);
+                    context.Wait(MessageReceived);
+                }
             }
         }
         [LuisIntent("HowMany")]
