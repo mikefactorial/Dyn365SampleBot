@@ -11,6 +11,7 @@ namespace SimpleEchoBot
     {
         public static void Register(HttpConfiguration config)
         {
+
             // Json settings
             config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

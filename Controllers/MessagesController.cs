@@ -26,53 +26,61 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         public virtual async Task<HttpResponseMessage> Post([FromBody] Activity message)
         {
             ConnectorClient connector = new ConnectorClient(new Uri(message.ServiceUrl));
-            // check if activity is of type message
-            if (message != null && message.GetActivityType() == ActivityTypes.Message)
+            try
             {
-                ChatState state = ChatState.RetrieveChatState(message.ChannelId, message.From.Id);
 
-                if (string.IsNullOrEmpty(state.OrganizationUrl) && CrmFunctions.ParseCrmUrl(message) == string.Empty)
+                // check if activity is of type message
+                if (message != null && message.GetActivityType() == ActivityTypes.Message)
                 {
-                    await connector.Conversations.ReplyToActivityAsync(message.CreateReply("Hi there, before we can work together you need to tell me your Dynamics 365 URL (e.g. https://contoso.crm.dynamics.com)"));
-                }
-                else if (string.IsNullOrEmpty(state.AccessToken) || CrmFunctions.ParseCrmUrl(message) != string.Empty)
-                {
-                    string extraQueryParams = string.Empty;
-                    if (CrmFunctions.ParseCrmUrl(message) != string.Empty)
+                    ChatState state = ChatState.RetrieveChatState(message.ChannelId, message.From.Id);
+
+                    if (string.IsNullOrEmpty(state.OrganizationUrl) && CrmFunctions.ParseCrmUrl(message) == string.Empty)
                     {
-                        state.OrganizationUrl = CrmFunctions.ParseCrmUrl(message);
+                        await connector.Conversations.ReplyToActivityAsync(message.CreateReply("Hi there, before we can work together you need to tell me your Dynamics 365 URL (e.g. https://contoso.crm.dynamics.com)"));
                     }
-
-                    Activity replyToConversation = message.CreateReply();
-                    replyToConversation.Recipient = message.From;
-                    replyToConversation.Type = "message";
-                    replyToConversation.Attachments = new List<Attachment>();
-
-                    List<CardAction> cardButtons = new List<CardAction>();
-                    CardAction plButton = new CardAction()
+                    else if (string.IsNullOrEmpty(state.AccessToken) || CrmFunctions.ParseCrmUrl(message) != string.Empty)
                     {
-                        // ASP.NET Web Application Hosted in Azure
-                        // Pass the user id
-                        Value = $"https://dyndevsbot.azurewebsites.net/Home/Login?channelId={HttpUtility.UrlEncode(message.ChannelId)}&userId={HttpUtility.UrlEncode(message.From.Id)}&extraQueryParams={extraQueryParams}",
-                        Type = "signin",
-                        Title = "Connect"
-                    };
+                        string extraQueryParams = string.Empty;
+                        if (CrmFunctions.ParseCrmUrl(message) != string.Empty)
+                        {
+                            state.OrganizationUrl = CrmFunctions.ParseCrmUrl(message);
+                        }
 
-                    cardButtons.Add(plButton);
+                        Activity replyToConversation = message.CreateReply();
+                        replyToConversation.Recipient = message.From;
+                        replyToConversation.Type = "message";
+                        replyToConversation.Attachments = new List<Attachment>();
 
-                    SigninCard plCard = new SigninCard("Click connect to signin to Dynamics 365 (" + state.OrganizationUrl + ").", new List<CardAction>() { plButton });
-                    Attachment plAttachment = plCard.ToAttachment();
-                    replyToConversation.Attachments.Add(plAttachment);
-                    await connector.Conversations.SendToConversationAsync(replyToConversation);
+                        List<CardAction> cardButtons = new List<CardAction>();
+                        CardAction plButton = new CardAction()
+                        {
+                            // ASP.NET Web Application Hosted in Azure
+                            // Pass the user id
+                            Value = $"https://dyndevsbot.azurewebsites.net/Home/Login?channelId={HttpUtility.UrlEncode(message.ChannelId)}&userId={HttpUtility.UrlEncode(message.From.Id)}&extraQueryParams={extraQueryParams}",
+                            Type = "signin",
+                            Title = "Connect"
+                        };
+
+                        cardButtons.Add(plButton);
+
+                        SigninCard plCard = new SigninCard("Click connect to signin to Dynamics 365 (" + state.OrganizationUrl + ").", new List<CardAction>() { plButton });
+                        Attachment plAttachment = plCard.ToAttachment();
+                        replyToConversation.Attachments.Add(plAttachment);
+                        await connector.Conversations.SendToConversationAsync(replyToConversation);
+                    }
+                    else
+                    {
+                        await Conversation.SendAsync(message, () => new CrmLuisDialog());
+                    }
                 }
                 else
                 {
-                    await Conversation.SendAsync(message, () => new CrmLuisDialog());
+                    HandleSystemMessage(message);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                HandleSystemMessage(message);
+                await connector.Conversations.ReplyToActivityAsync(message.CreateReply($"Kabloooey! Well played human you just fried my circuits. Thanks for being patient, I'm still learning to do some things while in preview. Hopefully, I'll get this worked out soon. Here's your prize: {ex.Message}"));
             }
             return new HttpResponseMessage(System.Net.HttpStatusCode.Accepted);
         }

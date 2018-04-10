@@ -13,11 +13,11 @@ using System.Web;
 namespace Microsoft.Bot.Sample.SimpleEchoBot
 {
     //[LuisModel("cc421661-4803-4359-b19b-35a8bae3b466", "70c9f99320804782866c3eba387d54bf")]
-    [LuisModel("64c400cf-b36d-4874-bd01-1c7567e57d8a", "1d8d05db65364c67a7bf15a4bf855f03")]
+    [LuisModel("64c400cf-b36d-4874-bd01-1c7567e57d8a", "a03f8796d25a493dac9ff9e8ad2b15a6")]
     [Serializable]
     public class CrmLuisDialog : LuisDialog<object>
     {
-        public const string Entity_Date = "builtin.datetime.date";
+        public const string Entity_Date = "builtin.datetimeV2.daterange";
         public const string Entity_Entity_Type = "EntityType";
         Random r = new Random();
         public CrmLuisDialog()
@@ -28,7 +28,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         {
         }
 
-        [LuisIntent("")]
+        [LuisIntent("None")]
         public async Task None(IDialogContext context, LuisResult result)
         {
             int index;

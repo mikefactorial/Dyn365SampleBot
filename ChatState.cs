@@ -56,9 +56,34 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 policy.Priority = CacheItemPriority.Default;
                 policy.SlidingExpiration = TimeSpan.FromMinutes(chatCacheDurationMinutes);
                 ChatState state = new ChatState(channelId, userId);
+                InitializeState(state);
                 MemoryCache.Default.Add(channelId + userId, state, policy);
             }
             return MemoryCache.Default[channelId + userId] as ChatState;
+        }
+
+        private static string InitializeState(ChatState state)
+        {
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["CrmUserName"]) && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["CrmPassword"]) && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["CrmServiceUrl"]) && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["CrmAuthority"]) && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["CrmClientId"]) && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["CrmClientSecret"]))
+            {
+                try
+                {
+                    AuthenticationContext authContext =
+                        new AuthenticationContext(ConfigurationManager.AppSettings["CrmAuthority"].ToString(), false);
+
+                    //No prompt for credentials
+                    var credentials = new UserPasswordCredential(ConfigurationManager.AppSettings["CrmUserName"].ToString(), ConfigurationManager.AppSettings["CrmPassword"].ToString());
+                    var authResult = authContext.AcquireTokenAsync(ConfigurationManager.AppSettings["CrmServiceUrl"].ToString(), ConfigurationManager.AppSettings["CrmClientId"].ToString(), credentials).Result;
+
+                    state.AccessToken = authResult.AccessToken;
+                    state.OrganizationUrl = ConfigurationManager.AppSettings["CrmServiceUrl"].ToString();
+                }
+                catch (Exception ex)
+                {
+                    string message = ex.ToString();
+                }
+            }
+            return string.Empty;
         }
 
         public string AccessToken
