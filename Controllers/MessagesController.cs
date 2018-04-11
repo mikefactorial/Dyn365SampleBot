@@ -41,9 +41,16 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     else if (string.IsNullOrEmpty(state.AccessToken) || CrmFunctions.ParseCrmUrl(message) != string.Empty)
                     {
                         string extraQueryParams = string.Empty;
-                        if (CrmFunctions.ParseCrmUrl(message) != string.Empty)
+
+                        string crmUrl = CrmFunctions.ParseCrmUrl(message);
+
+                        if (crmUrl != string.Empty && state.OrganizationUrl != crmUrl)
                         {
-                            state.OrganizationUrl = CrmFunctions.ParseCrmUrl(message);
+                            if (!string.IsNullOrEmpty(state.OrganizationUrl) && state.OrganizationUrl != crmUrl)
+                            {
+                                extraQueryParams = "prompt=login";
+                            }
+                            state.OrganizationUrl = crmUrl;
                         }
 
                         Activity replyToConversation = message.CreateReply();
