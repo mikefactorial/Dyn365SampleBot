@@ -8,7 +8,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
 	public static class HttpClientExtensions
 	{
         public static string[][] Images = new string[][] {
-            new string[] { "R2D2", "http://img.photobucket.com/albums/v51/tournamentmaster2000_au/502-r2d2.jpg" },
+            new string[] { "R2D2", "https://www.swarovski.com/is-bin/intershop.static/WFS/SCO-Media-Site/-/-/publicimages/CG/B2C/PROD/360/Swarovski-Star-Wars-R2-D2-5301533-W360.jpg" },
             new string[] { "Data", "https://s-media-cache-ak0.pinimg.com/originals/b8/dc/6d/b8dc6ddfe09223d4f04e4dd9e6f42e21.jpg" },
             new string[] { "Robocop", "https://i.ytimg.com/vi/zbCbwP6ibR4/maxresdefault.jpg" },
             new string[] { "Bender", "https://pbs.twimg.com/profile_images/76277472/bender_400x400.jpg" },
