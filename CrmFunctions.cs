@@ -22,8 +22,6 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         private static string _clientId = ConfigurationManager.AppSettings["CrmClientId"];
         // Azure Application REPLY URL - can be anything here but it must be registered ahead of time
         private static string _redirectUrl = ConfigurationManager.AppSettings["CrmRedirectUrl"];
-        //CRM URL
-        private static string _serviceUrl = ConfigurationManager.AppSettings["CrmServiceUrl"];
         //Azure Directory OAUTH 2.0 AUTHORIZATION ENDPOINT
         private static string _authority = ConfigurationManager.AppSettings["CrmAuthority"];
 
@@ -31,7 +29,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         {
             ChatState state = ChatState.RetrieveChatState(channelId, userId);
             HttpClient httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri(_serviceUrl);
+            httpClient.BaseAddress = new Uri(state.OrganizationUrl);
             httpClient.Timeout = new TimeSpan(0, 2, 0);
             httpClient.DefaultRequestHeaders.Add("OData-MaxVersion", "4.0");
             httpClient.DefaultRequestHeaders.Add("OData-Version", "4.0");
