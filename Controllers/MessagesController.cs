@@ -11,6 +11,7 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Web;
+using System.Configuration;
 
 namespace Microsoft.Bot.Sample.SimpleEchoBot
 {
@@ -63,7 +64,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                         {
                             // ASP.NET Web Application Hosted in Azure
                             // Pass the user id
-                            Value = $"https://dyndevsbot.azurewebsites.net/Home/Login?channelId={HttpUtility.UrlEncode(message.ChannelId)}&userId={HttpUtility.UrlEncode(message.From.Id)}&userName={HttpUtility.UrlEncode(message.From.Name)}&fromId={HttpUtility.UrlEncode(message.Recipient.Id)}&fromName={HttpUtility.UrlEncode(message.Recipient.Name)}&serviceUrl={HttpUtility.UrlEncode(message.ServiceUrl)}&conversationId={HttpUtility.UrlEncode(message.Conversation.Id)}&extraQueryParams={extraQueryParams}",
+                            Value = $"{ConfigurationManager.AppSettings["BotAuthUrl"]}?channelId={HttpUtility.UrlEncode(message.ChannelId)}&userId={HttpUtility.UrlEncode(message.From.Id)}&userName={HttpUtility.UrlEncode(message.From.Name)}&fromId={HttpUtility.UrlEncode(message.Recipient.Id)}&fromName={HttpUtility.UrlEncode(message.Recipient.Name)}&serviceUrl={HttpUtility.UrlEncode(message.ServiceUrl)}&conversationId={HttpUtility.UrlEncode(message.Conversation.Id)}&extraQueryParams={extraQueryParams}",
                             Type = "signin",
                             Title = "Connect"
                         };
