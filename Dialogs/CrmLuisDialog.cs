@@ -71,7 +71,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 }
             }
         }
-        [LuisIntent("HowMany")]
+        [LuisIntent("Locate")]
         public async Task Locate(IDialogContext context, LuisResult result)
         {
             EntityRecommendation entityType;
